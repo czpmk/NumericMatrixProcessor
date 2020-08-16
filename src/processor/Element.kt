@@ -3,7 +3,7 @@ package processor
 import java.lang.NumberFormatException
 
 data class Element(private val _value: String) {
-    lateinit var type: String
+    private lateinit var type: String
     var isValid: Boolean = false
     var value: String = ""
         set(newValue) {
@@ -71,7 +71,7 @@ data class Element(private val _value: String) {
         }
     }
 
-    fun add(elementToAdd: Element) {
+    fun add(elementToAdd: Element): Element {
         when {
             (this.type == "BIGINT" || elementToAdd.type == "BIGINT") -> {
                 val newValue = this.value.toBigInteger() + elementToAdd.value.toBigInteger()
@@ -86,9 +86,10 @@ data class Element(private val _value: String) {
                 this.value = newValue.toString()
             }
         }
+        return this
     }
 
-    fun multiply(factor: Element) {
+    fun multiply(factor: Element): Element {
         when {
             (this.type == "BIGINT" || factor.type == "BIGINT") -> {
                 val newValue = this.value.toBigInteger().multiply(factor.value.toBigInteger())
@@ -103,22 +104,23 @@ data class Element(private val _value: String) {
                 this.value = newValue.toString()
             }
         }
+        return this
     }
 
-    fun divide(factor: Element) {
-        when {
-            (this.type == "BIGINT" || factor.type == "BIGINT") -> {
-                val newValue = this.value.toBigInteger().divide(factor.value.toBigInteger())
-                this.value = newValue.toString()
-            }
-            (this.type == "DOUBLE" || factor.type == "DOUBLE") -> {
-                val newValue = this.value.toDouble() / factor.value.toDouble()
-                this.value = newValue.toString()
-            }
-            else -> {
-                val newValue = this.value.toInt() / factor.value.toInt()
-                this.value = newValue.toString()
-            }
-        }
-    }
+//    fun divide(factor: Element) {
+//        when {
+//            (this.type == "BIGINT" || factor.type == "BIGINT") -> {
+//                val newValue = this.value.toBigInteger().divide(factor.value.toBigInteger())
+//                this.value = newValue.toString()
+//            }
+//            (this.type == "DOUBLE" || factor.type == "DOUBLE") -> {
+//                val newValue = this.value.toDouble() / factor.value.toDouble()
+//                this.value = newValue.toString()
+//            }
+//            else -> {
+//                val newValue = this.value.toInt() / factor.value.toInt()
+//                this.value = newValue.toString()
+//            }
+//        }
+//    }
 }
