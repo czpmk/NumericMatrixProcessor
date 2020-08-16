@@ -80,11 +80,8 @@ class Matrix(_value: MutableList<MutableList<Element>> = mutableListOf()) {
     private fun dotProduct(firstMatrix: Matrix, secondMatrix: Matrix, row: Int, column: Int): Element {
         var sum = Element("0")
         for (i in 0 until firstMatrix.columns) {
-            print("${firstMatrix.get(row, i).value} * ${secondMatrix.get(i, column).value} + ")
             sum = sum.add(firstMatrix.get(row, i).multiply(secondMatrix.get(i, column)))
         }
-        print(" = " + sum.value)
-        println()
         return sum
     }
 
