@@ -70,4 +70,55 @@ data class Element(private val _value: String) {
             }
         }
     }
+
+    fun add(elementToAdd: Element) {
+        when {
+            (this.type == "BIGINT" || elementToAdd.type == "BIGINT") -> {
+                val newValue = this.value.toBigInteger() + elementToAdd.value.toBigInteger()
+                this.value = newValue.toString()
+            }
+            (this.type == "DOUBLE" || elementToAdd.type == "DOUBLE") -> {
+                val newValue = this.value.toDouble() + elementToAdd.value.toDouble()
+                this.value = newValue.toString()
+            }
+            else -> {
+                val newValue = this.value.toInt() + elementToAdd.value.toInt()
+                this.value = newValue.toString()
+            }
+        }
+    }
+
+    fun multiply(factor: Element) {
+        when {
+            (this.type == "BIGINT" || factor.type == "BIGINT") -> {
+                val newValue = this.value.toBigInteger().multiply(factor.value.toBigInteger())
+                this.value = newValue.toString()
+            }
+            (this.type == "DOUBLE" || factor.type == "DOUBLE") -> {
+                val newValue = this.value.toDouble() * factor.value.toDouble()
+                this.value = newValue.toString()
+            }
+            else -> {
+                val newValue = this.value.toInt() * factor.value.toInt()
+                this.value = newValue.toString()
+            }
+        }
+    }
+
+    fun divide(factor: Element) {
+        when {
+            (this.type == "BIGINT" || factor.type == "BIGINT") -> {
+                val newValue = this.value.toBigInteger().divide(factor.value.toBigInteger())
+                this.value = newValue.toString()
+            }
+            (this.type == "DOUBLE" || factor.type == "DOUBLE") -> {
+                val newValue = this.value.toDouble() / factor.value.toDouble()
+                this.value = newValue.toString()
+            }
+            else -> {
+                val newValue = this.value.toInt() / factor.value.toInt()
+                this.value = newValue.toString()
+            }
+        }
+    }
 }
