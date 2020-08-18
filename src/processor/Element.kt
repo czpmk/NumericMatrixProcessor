@@ -56,12 +56,12 @@ data class Element(private val _value: String) {
                 type = "INT"
                 isValid = true
             }
-            isDouble(newArgument) -> {
-                type = "DOUBLE"
-                isValid = true
-            }
             isBigInt(newArgument) -> {
                 type = "BIGINT"
+                isValid = true
+            }
+            isDouble(newArgument) -> {
+                type = "DOUBLE"
                 isValid = true
             }
             else -> {
@@ -89,7 +89,7 @@ data class Element(private val _value: String) {
     }
 
     fun multiply(factor: Element): Element {
-         return when {
+        return when {
             (this.type == "BIGINT" || factor.type == "BIGINT") -> {
                 val newValue = this.value.toBigInteger().multiply(factor.value.toBigInteger())
                 Element(newValue.toString())
