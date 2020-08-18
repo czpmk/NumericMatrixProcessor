@@ -8,7 +8,12 @@ const val menuMessage = "~  Available actions:\n" +
         "1. Add matrices\n" +
         "2. Multiply matrix to a constant\n" +
         "3. Multiply matrices\n" +
+        "4. Transpose matrix\n" +
         "0. Exit\n"
+const val transpositionMenu = "1. Main diagonal\n" +
+        "2. Side diagonal\n" +
+        "3. Vertical line\n" +
+        "4. Horizontal line\n"
 
 fun readSize(): Pair<Int, Int> {
     while (true) {
@@ -43,7 +48,7 @@ fun readMatrix(numberOfRows: Int, numberOfColumns: Int): Matrix {
         } else {
             println("Matrix contains invalid elements: \n")
             for (row in newMatrix.value) {
-                print(row.filter{i -> !i.isValid}.joinToString(" ") + " ")
+                print(row.filter { i -> !i.isValid }.joinToString(" ") + " ")
             }
             println("\n~ Please, enter the matrix once again: ")
         }
@@ -104,6 +109,42 @@ fun matrixMultiplicationPipeline() {
     }
 }
 
+fun transpositionPipeline() {
+    correctLoop@ while (true) {
+        println()
+        print(transpositionMenu)
+        print("~  Your choice: ")
+        when (scanner.next()) {
+            "1" -> {
+                val (rows, columns) = readSize()
+                val matrix = readMatrix(rows, columns)
+                matrix.transpose().print()
+                break@correctLoop
+            }
+            "2" -> {
+                val (rows, columns) = readSize()
+                val matrix = readMatrix(rows, columns)
+                matrix.transpose(2).print()
+                break@correctLoop
+            }
+            "3" -> {
+                val (rows, columns) = readSize()
+                val matrix = readMatrix(rows, columns)
+                matrix.transpose(3).print()
+                break@correctLoop
+            }
+            "4" -> {
+                val (rows, columns) = readSize()
+                val matrix = readMatrix(rows, columns)
+                matrix.transpose(4).print()
+                break@correctLoop
+            }
+            else -> println("Invalid choice\n" +
+                    "Please enter the transposition type once again")
+        }
+    }
+}
+
 fun nextAction() {
     println("~  Welcome to Numeric Matrix Processor, have fun!")
     actionLoop@ while (true) {
@@ -117,6 +158,7 @@ fun nextAction() {
             "1" -> additionPipeline()
             "2" -> constantMultiplicationPipeline()
             "3" -> matrixMultiplicationPipeline()
+            "4" -> transpositionPipeline()
             else -> println("Invalid action: There is no action = $actionIdentifier")
         }
         println()

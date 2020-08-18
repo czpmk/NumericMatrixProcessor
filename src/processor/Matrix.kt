@@ -97,6 +97,53 @@ class Matrix(_value: MutableList<MutableList<Element>> = mutableListOf()) {
         return newMatrix
     }
 
+    fun transpose(transposeBy: Int = 1): Matrix {
+        val newMatrix = Matrix()
+        when (transposeBy) {
+            // Main diagonal
+            1 -> {
+                for (column in 0 until this.columns) {
+                    val newRow = mutableListOf<Element>()
+                    for (row in 0 until this.rows) {
+                        newRow.add(this.get(row, column))
+                    }
+                    newMatrix.appendRow(newRow)
+                }
+            }
+            // Side diagonal
+            2 -> {
+                for (column in (this.columns - 1) downTo 0) {
+                    val newRow = mutableListOf<Element>()
+                    for (row in (this.rows - 1) downTo 0) {
+                        newRow.add(this.get(row, column))
+                    }
+                    newMatrix.appendRow(newRow)
+                }
+            }
+            // Vertical line
+            3 -> {
+                for (row in 0 until this.rows) {
+                    val newRow = mutableListOf<Element>()
+                    for (column in (this.columns - 1) downTo 0) {
+                        newRow.add(this.get(row, column))
+                    }
+                    newMatrix.appendRow(newRow)
+                }
+            }
+            // Horizontal line
+            4 -> {
+                for (row in (this.rows - 1) downTo 0) {
+                    val newRow = mutableListOf<Element>()
+                    for (column in 0 until this.columns) {
+                        newRow.add(this.get(row, column))
+                    }
+                    newMatrix.appendRow(newRow)
+                }
+            }
+        }
+        return newMatrix
+    }
+
     fun print() {
         for (row in 0 until rows) {
             for (column in 0 until columns) {
