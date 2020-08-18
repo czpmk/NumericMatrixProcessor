@@ -114,32 +114,14 @@ fun transpositionPipeline() {
         println()
         print(transpositionMenu)
         print("~  Your choice: ")
-        when (scanner.next()) {
-            "1" -> {
-                val (rows, columns) = readSize()
-                val matrix = readMatrix(rows, columns)
-                matrix.transpose().print()
-                break@correctLoop
-            }
-            "2" -> {
-                val (rows, columns) = readSize()
-                val matrix = readMatrix(rows, columns)
-                matrix.transpose(2).print()
-                break@correctLoop
-            }
-            "3" -> {
-                val (rows, columns) = readSize()
-                val matrix = readMatrix(rows, columns)
-                matrix.transpose(3).print()
-                break@correctLoop
-            }
-            "4" -> {
-                val (rows, columns) = readSize()
-                val matrix = readMatrix(rows, columns)
-                matrix.transpose(4).print()
-                break@correctLoop
-            }
-            else -> println("Invalid choice\n" +
+        val newChoice = scanner.next()
+        if (newChoice in listOf("1", "2", "3", "4")) {
+            val (rows, columns) = readSize()
+            val matrix = readMatrix(rows, columns)
+            matrix.transpose(newChoice.toInt()).print()
+            break@correctLoop
+        } else {
+            println("Invalid choice\n" +
                     "Please enter the transposition type once again")
         }
     }
