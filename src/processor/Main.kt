@@ -132,8 +132,9 @@ fun determinantPipeline() {
         val matrix = readMatrix(numberOfRows, numberOfColumns)
         println("\nThe result is:")
         when (numberOfRows) {
-            in 1..2 -> println(matrix.determinantOfSmallMatrix())
-            else -> println(matrix.determinantOfBigMatrix())
+            1 -> println(matrix.determinant1x1().value)
+            2 -> println(matrix.determinant2x2().value)
+            else -> println(matrix.determinantOfBigMatrix().value)
         }
     }
 }

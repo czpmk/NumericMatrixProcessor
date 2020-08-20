@@ -1,5 +1,7 @@
 package processor
 
+import kotlin.math.pow
+
 class Matrix(_value: MutableList<MutableList<Element>> = mutableListOf()) {
     var value: MutableList<MutableList<Element>> = _value
     val rows: Int
@@ -144,30 +146,36 @@ class Matrix(_value: MutableList<MutableList<Element>> = mutableListOf()) {
         return newMatrix
     }
 
-    fun determinantOfSmallMatrix(): String {
-        return when (this.columns) {
-            1 -> this.get(0, 0).value
-            else -> {
-                val plusSum = this.get(0, 0).multiply(this.get(1, 1))
-                val minusSum = this.get(0, 1).multiply(this.get(1, 0))
-                plusSum.add(minusSum.multiply(Element("-1"))).value
-            }
-        }
+    fun determinant1x1(): Element {
+        return this.get(0, 0)
     }
 
-    fun determinantOfBigMatrix(): String {
+    fun determinant2x2(): Element {
+        val plusSum = this.get(0, 0).multiply(this.get(1, 1))
+        val minusSum = this.get(0, 1).multiply(this.get(1, 0))
+        return plusSum.add(minusSum.multiply(Element("-1")))
+    }
+
+    fun determinantOfBigMatrix(): Element {
         var determinant = Element("0")
-        for (startRow in 0 until rows) {
-            var plusProduct = Element("1")
-            var minusProduct = Element("-1")
-            for (i in 0 until columns) {
-                val rowIdx = (startRow + i) % columns
-                plusProduct = plusProduct.multiply(this.get(rowIdx, i))
-                minusProduct = minusProduct.multiply(this.get(rowIdx, (columns - 1 - i)))
+        for (i in 0 until rows) {
+            // determine sign of minor
+            val sign = Element((-1.0).pow(i + 0).toInt().toString())
+            // get minor
+            val filteredMatrix = this.value.filterIndexed { idx, _ -> idx != i }.toMutableList()
+            for (row in filteredMatrix.indices) {
+                filteredMatrix[row] = filteredMatrix[row].filterIndexed { idx, _ -> idx != 0 }.toMutableList()
             }
-            determinant = determinant.add(plusProduct).add(minusProduct)
+            val minor = Matrix(filteredMatrix)
+            // sum determinant
+            determinant = when (minor.rows) {
+                2 -> determinant.add(this.get(i, 0).multiply(minor.determinant2x2().multiply(sign)))
+                else -> {
+                    determinant.add(this.get(i, 0).multiply(minor.determinantOfBigMatrix().multiply(sign)))
+                }
+            }
         }
-        return determinant.value
+        return determinant
     }
 
     fun print() {
@@ -179,8 +187,3 @@ class Matrix(_value: MutableList<MutableList<Element>> = mutableListOf()) {
         }
     }
 }
-//1 2 0 0 0
-//−2 4 0 0 0
-//4 −781 1 0 0
-//3208 −5 −54 3 0
-//−8379 −9 0 −879 3
