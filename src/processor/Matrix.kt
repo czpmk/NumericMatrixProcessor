@@ -1,5 +1,7 @@
 package processor
 
+import kotlin.math.pow
+
 class Matrix(_value: MutableList<MutableList<Element>> = mutableListOf()) {
     var value: MutableList<MutableList<Element>> = _value
     val rows: Int
@@ -53,7 +55,7 @@ class Matrix(_value: MutableList<MutableList<Element>> = mutableListOf()) {
         }
     }
 
-    fun sum(secondMatrix: Matrix, firstMatrix: Matrix = this): Matrix{
+    fun sum(secondMatrix: Matrix, firstMatrix: Matrix = this): Matrix {
         val newMatrix = Matrix()
         for (row in 0 until firstMatrix.rows) {
             val newRow = mutableListOf<Element>()
@@ -142,6 +144,38 @@ class Matrix(_value: MutableList<MutableList<Element>> = mutableListOf()) {
             }
         }
         return newMatrix
+    }
+
+    fun determinant1x1(): Element {
+        return this.get(0, 0)
+    }
+
+    fun determinant2x2(): Element {
+        val plusSum = this.get(0, 0).multiply(this.get(1, 1))
+        val minusSum = this.get(0, 1).multiply(this.get(1, 0))
+        return plusSum.add(minusSum.multiply(Element("-1")))
+    }
+
+    fun determinantOfBigMatrix(): Element {
+        var determinant = Element("0")
+        for (i in 0 until rows) {
+            // determine sign of minor
+            val sign = Element((-1.0).pow(i + 0).toInt().toString())
+            // get minor
+            val filteredMatrix = this.value.filterIndexed { idx, _ -> idx != i }.toMutableList()
+            for (row in filteredMatrix.indices) {
+                filteredMatrix[row] = filteredMatrix[row].filterIndexed { idx, _ -> idx != 0 }.toMutableList()
+            }
+            val minor = Matrix(filteredMatrix)
+            // sum determinant
+            determinant = when (minor.rows) {
+                2 -> determinant.add(this.get(i, 0).multiply(minor.determinant2x2().multiply(sign)))
+                else -> {
+                    determinant.add(this.get(i, 0).multiply(minor.determinantOfBigMatrix().multiply(sign)))
+                }
+            }
+        }
+        return determinant
     }
 
     fun print() {
