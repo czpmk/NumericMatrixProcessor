@@ -9,6 +9,7 @@ const val menuMessage = "~  Available actions:\n" +
         "2. Multiply matrix to a constant\n" +
         "3. Multiply matrices\n" +
         "4. Transpose matrix\n" +
+        "5. Calculate a determinant\n" +
         "0. Exit\n"
 const val transpositionMenu = "1. Main diagonal\n" +
         "2. Side diagonal\n" +
@@ -46,11 +47,8 @@ fun readMatrix(numberOfRows: Int, numberOfColumns: Int): Matrix {
         if (newMatrix.isValid) {
             return newMatrix
         } else {
-            println("Matrix contains invalid elements: \n")
-            for (row in newMatrix.value) {
-                print(row.filter { i -> !i.isValid }.joinToString(" ") + " ")
-            }
-            println("\n~ Please, enter the matrix once again: ")
+            println("Matrix contains invalid elements")
+            println("~ Please, enter the matrix once again: ")
         }
     }
 }
@@ -111,7 +109,6 @@ fun matrixMultiplicationPipeline() {
 
 fun transpositionPipeline() {
     correctLoop@ while (true) {
-        println()
         print(transpositionMenu)
         print("~  Your choice: ")
         val newChoice = scanner.next()
@@ -123,6 +120,20 @@ fun transpositionPipeline() {
         } else {
             println("Invalid choice\n" +
                     "Please enter the transposition type once again")
+        }
+    }
+}
+
+fun determinantPipeline() {
+    val (numberOfRows, numberOfColumns) = readSize()
+    if (numberOfRows != numberOfColumns) {
+        println("Invalid size, can not calculate determinant of a non-square matrix")
+    } else {
+        val matrix = readMatrix(numberOfRows, numberOfColumns)
+        println("\nThe result is:")
+        when (numberOfRows) {
+            in 1..2 -> println(matrix.determinantOfSmallMatrix())
+            else -> println(matrix.determinantOfBigMatrix())
         }
     }
 }
@@ -141,6 +152,7 @@ fun nextAction() {
             "2" -> constantMultiplicationPipeline()
             "3" -> matrixMultiplicationPipeline()
             "4" -> transpositionPipeline()
+            "5" -> determinantPipeline()
             else -> println("Invalid action: There is no action = $actionIdentifier")
         }
         println()

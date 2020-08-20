@@ -53,7 +53,7 @@ class Matrix(_value: MutableList<MutableList<Element>> = mutableListOf()) {
         }
     }
 
-    fun sum(secondMatrix: Matrix, firstMatrix: Matrix = this): Matrix{
+    fun sum(secondMatrix: Matrix, firstMatrix: Matrix = this): Matrix {
         val newMatrix = Matrix()
         for (row in 0 until firstMatrix.rows) {
             val newRow = mutableListOf<Element>()
@@ -144,6 +144,32 @@ class Matrix(_value: MutableList<MutableList<Element>> = mutableListOf()) {
         return newMatrix
     }
 
+    fun determinantOfSmallMatrix(): String {
+        return when (this.columns) {
+            1 -> this.get(0, 0).value
+            else -> {
+                val plusSum = this.get(0, 0).multiply(this.get(1, 1))
+                val minusSum = this.get(0, 1).multiply(this.get(1, 0))
+                plusSum.add(minusSum.multiply(Element("-1"))).value
+            }
+        }
+    }
+
+    fun determinantOfBigMatrix(): String {
+        var determinant = Element("0")
+        for (startRow in 0 until rows) {
+            var plusProduct = Element("1")
+            var minusProduct = Element("-1")
+            for (i in 0 until columns) {
+                val rowIdx = (startRow + i) % columns
+                plusProduct = plusProduct.multiply(this.get(rowIdx, i))
+                minusProduct = minusProduct.multiply(this.get(rowIdx, (columns - 1 - i)))
+            }
+            determinant = determinant.add(plusProduct).add(minusProduct)
+        }
+        return determinant.value
+    }
+
     fun print() {
         for (row in 0 until rows) {
             for (column in 0 until columns) {
@@ -153,3 +179,8 @@ class Matrix(_value: MutableList<MutableList<Element>> = mutableListOf()) {
         }
     }
 }
+//1 2 0 0 0
+//−2 4 0 0 0
+//4 −781 1 0 0
+//3208 −5 −54 3 0
+//−8379 −9 0 −879 3
