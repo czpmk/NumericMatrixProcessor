@@ -1,14 +1,20 @@
 package processor
 
+import kotlin.math.floor
 import java.lang.NumberFormatException
+import kotlin.math.ceil
 
 data class Element(private val _value: String) {
-    private lateinit var type: String
+    lateinit var type: String
     var isValid: Boolean = false
     var value: String = ""
         set(newValue) {
             interpretArguments(newValue)
             field = newValue
+        }
+    val valueToPrint: String
+        get() {
+            return valueToPrint()
         }
 
     init {
@@ -17,7 +23,7 @@ data class Element(private val _value: String) {
 
     private fun isInt(newArgument: String): Boolean {
         return try {
-            newArgument.toLong()
+            newArgument.toInt()
             true
         } catch (e: NumberFormatException) {
             false
@@ -33,19 +39,6 @@ data class Element(private val _value: String) {
         }
     }
 
-    private fun isBigInt(newArgument: String): Boolean {
-        if (newArgument[0] in '0'..'9' || (newArgument[0] == '-' && newArgument.length > 1)) {
-            for (i in 1 until newArgument.length) {
-                if (newArgument[i] !in '0'..'9') {
-                    return false
-                }
-            }
-            return true
-        } else {
-            return false
-        }
-    }
-
     private fun interpretArguments(newArgument: String) {
         when {
             newArgument.isEmpty() -> {
@@ -54,10 +47,6 @@ data class Element(private val _value: String) {
             }
             isInt(newArgument) -> {
                 type = "INT"
-                isValid = true
-            }
-            isBigInt(newArgument) -> {
-                type = "BIGINT"
                 isValid = true
             }
             isDouble(newArgument) -> {
@@ -71,37 +60,36 @@ data class Element(private val _value: String) {
         }
     }
 
-    fun add(elementToAdd: Element): Element {
-        return when {
-            (this.type == "BIGINT" || elementToAdd.type == "BIGINT") -> {
-                val newValue = this.value.toBigInteger() + elementToAdd.value.toBigInteger()
-                Element(newValue.toString())
+    private fun valueToPrint(): String {
+        return if (type == "DOUBLE") {
+            if (value[0] == '-') {
+                (ceil((value.toDouble() * 100)) / 100).toString()
+            } else {
+                (floor((value.toDouble() * 100)) / 100).toString()
             }
-            (this.type == "DOUBLE" || elementToAdd.type == "DOUBLE") -> {
-                val newValue = this.value.toDouble() + elementToAdd.value.toDouble()
-                Element(newValue.toString())
-            }
-            else -> {
-                val newValue = this.value.toInt() + elementToAdd.value.toInt()
-                Element(newValue.toString())
-            }
+
+        } else {
+            value
         }
     }
 
-    fun multiply(factor: Element): Element {
-        return when {
-            (this.type == "BIGINT" || factor.type == "BIGINT") -> {
-                val newValue = this.value.toBigInteger().multiply(factor.value.toBigInteger())
-                Element(newValue.toString())
-            }
-            (this.type == "DOUBLE" || factor.type == "DOUBLE") -> {
-                val newValue = this.value.toDouble() * factor.value.toDouble()
-                Element(newValue.toString())
-            }
-            else -> {
-                val newValue = this.value.toInt() * factor.value.toInt()
-                Element(newValue.toString())
-            }
+    fun add(element: Element): Element {
+        return try {
+            Element((this.value.toInt() + element.value.toInt()).toString())
+        } catch (e: NumberFormatException) {
+            Element((this.value.toDouble() + element.value.toDouble()).toString())
         }
+    }
+
+    fun multiply(element: Element): Element {
+        return try {
+            Element((this.value.toInt() * element.value.toInt()).toString())
+        } catch (e: NumberFormatException) {
+            Element((this.value.toDouble() * element.value.toDouble()).toString())
+        }
+    }
+
+    fun divide(element: Element): Element {
+        return Element((this.value.toDouble() / element.value.toDouble()).toString())
     }
 }
