@@ -10,6 +10,7 @@ const val menuMessage = "~  Available actions:\n" +
         "3. Multiply matrices\n" +
         "4. Transpose matrix\n" +
         "5. Calculate a determinant\n" +
+        "6. Inverse matrix\n" +
         "0. Exit\n"
 const val transpositionMenu = "1. Main diagonal\n" +
         "2. Side diagonal\n" +
@@ -131,10 +132,20 @@ fun determinantPipeline() {
     } else {
         val matrix = readMatrix(numberOfRows, numberOfColumns)
         println("\nThe result is:")
-        when (numberOfRows) {
-            1 -> println(matrix.determinant1x1().value)
-            2 -> println(matrix.determinant2x2().value)
-            else -> println(matrix.determinantOfBigMatrix().value)
+        println(matrix.determinant().value)
+    }
+}
+
+fun inversePipeline() {
+    val (numberOfRows, numberOfColumns) = readSize()
+    if (numberOfRows != numberOfColumns) {
+        println("Invalid size, can not calculate inverse matrix of a non-square matrix")
+    } else {
+        val matrix = readMatrix(numberOfRows, numberOfColumns)
+        val (isValid, result) = matrix.inverse()
+        if (isValid) {
+            println("The result is:")
+            result.print()
         }
     }
 }
@@ -154,6 +165,7 @@ fun nextAction() {
             "3" -> matrixMultiplicationPipeline()
             "4" -> transpositionPipeline()
             "5" -> determinantPipeline()
+            "6" -> inversePipeline()
             else -> println("Invalid action: There is no action = $actionIdentifier")
         }
         println()
