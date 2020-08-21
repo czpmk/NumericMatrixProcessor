@@ -146,41 +146,83 @@ class Matrix(_value: MutableList<MutableList<Element>> = mutableListOf()) {
         return newMatrix
     }
 
-    fun determinant1x1(): Element {
+    private fun determinant1x1(): Element {
         return this.get(0, 0)
     }
 
-    fun determinant2x2(): Element {
+    private fun determinant2x2(): Element {
         val plusSum = this.get(0, 0).multiply(this.get(1, 1))
         val minusSum = this.get(0, 1).multiply(this.get(1, 0))
         return plusSum.add(minusSum.multiply(Element("-1")))
     }
 
-    fun determinantOfBigMatrix(): Element {
+    private fun minor(rowIdx: Int, columnIdx: Int = 0): Matrix {
+        val filteredMatrix = this.value.filterIndexed { idx, _ -> idx != rowIdx }.toMutableList()
+        for (row in filteredMatrix.indices) {
+            filteredMatrix[row] = filteredMatrix[row].filterIndexed { idx, _ -> idx != columnIdx }.toMutableList()
+        }
+        return Matrix(filteredMatrix)
+    }
+
+    private fun determinantOfBigMatrix(): Element {
         var determinant = Element("0")
-        for (i in 0 until rows) {
-            // determine sign of minor
-            val sign = Element((-1.0).pow(i + 0).toInt().toString())
-            // get minor
-            val filteredMatrix = this.value.filterIndexed { idx, _ -> idx != i }.toMutableList()
-            for (row in filteredMatrix.indices) {
-                filteredMatrix[row] = filteredMatrix[row].filterIndexed { idx, _ -> idx != 0 }.toMutableList()
-            }
-            val minor = Matrix(filteredMatrix)
-            // sum determinant
+        for (row in 0 until rows) {
+            val sign = Element((-1.0).pow(row + 0).toInt().toString())
+            val minor = this.minor(row)
             determinant = when (minor.rows) {
-                2 -> determinant.add(this.get(i, 0).multiply(minor.determinant2x2().multiply(sign)))
+                2 -> determinant.add(this.get(row, 0).multiply(minor.determinant2x2().multiply(sign)))
                 else -> {
-                    determinant.add(this.get(i, 0).multiply(minor.determinantOfBigMatrix().multiply(sign)))
+                    determinant.add(this.get(row, 0).multiply(minor.determinantOfBigMatrix().multiply(sign)))
                 }
             }
         }
         return determinant
     }
 
+    fun determinant(): Element {
+        return when (rows) {
+            1 -> determinant1x1()
+            2 -> determinant2x2()
+            else -> determinantOfBigMatrix()
+        }
+    }
+
+    fun inverse(): Pair<Boolean, Matrix> {
+        val determinant = determinant()
+        return if (determinant.value.toDouble() == 0.0) {
+            println("Cannot calculate inverse matrix when determinant of original matrix is equal 0")
+            Pair(false, Matrix())
+        } else {
+            val newMatrix = Matrix()
+            for (row in 0 until rows) {
+                val newRow = mutableListOf<Element>()
+                for (column in 0 until columns) {
+                    val sign = Element((-1.0).pow(row + column).toInt().toString())
+                    newRow.add(minor(row, column).determinant().multiply(sign).divide(determinant))
+                }
+                newMatrix.appendRow(newRow)
+            }
+            Pair(isValid, newMatrix.transpose())
+        }
+    }
+
     fun print() {
+        val columnsWidth = mutableListOf<Int>()
+        for (i in 0 until columns) columnsWidth.add(0)
         for (row in 0 until rows) {
             for (column in 0 until columns) {
+                if (get(row, column).valueToPrint.length > columnsWidth[column]) {
+                    columnsWidth[column] = get(row, column).valueToPrint.length
+                }
+            }
+        }
+        for (row in 0 until rows) {
+            for (column in 0 until columns) {
+                if (get(row, column).valueToPrint.length < columnsWidth[column]) {
+                    repeat(columnsWidth[column] - get(row, column).valueToPrint.length) {
+                        print(" ")
+                    }
+                }
                 print("${this.get(row, column).value} ")
             }
             println()
